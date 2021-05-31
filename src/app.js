@@ -2,11 +2,12 @@ import { maze } from './maze.js';
 import { findStartPosition } from './findStartPosition.js';
 import { isPositionNew } from './isPositionNew.js';
 import { checkMazeExit } from './checkMazeExit.js';
+import { MapTree } from './MapTree.js';
 
 const startPosition = findStartPosition(maze);
 
 
-const movesMap = {};
+const mapTree = new MapTree();
 
 const checkedPositions = [];
 
@@ -63,7 +64,7 @@ const findWays = (startPosition, map) => {
 
 }
 
-findWays(startPosition, movesMap);
+findWays(startPosition, mapTree);
 
 console.log('Map: ', JSON.stringify(movesMap));
 console.log('checkedPositions: ', checkedPositions);
