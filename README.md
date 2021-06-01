@@ -1,6 +1,9 @@
 # maze
 
-Write an algorithm for finding a way out of the maze. The maze is a 2-dimensional array in which:
+Command to run application: 
+npm start
+
+The algorithm for finding a way out of the maze. The maze is a 2-dimensional array in which:
 
 `0` - start position
 `+` - way
