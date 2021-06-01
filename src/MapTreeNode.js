@@ -1,20 +1,17 @@
 export class MapTreeNode {
   constructor({
+    header = false,
     move = null,
-    up = null,
-    down = null,
-    left = null,
-    right = null,
-    header = false }) {
+    position = null,
+    parent = null,
+    exit = false,
+     }) {
 
     this.header = header;
     this.move = move;
-    this.up = up;
-    this.down = down;
-    this.left = left;
-    this.right = right;
-    this.next = null;
-    this.previous = null;
+    this.position = position;
+    this.parent = parent;
+    this.exit = exit;
 
   }
 }

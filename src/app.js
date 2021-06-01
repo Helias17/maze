@@ -2,18 +2,20 @@ import { maze } from './maze.js';
 import { findStartPosition } from './findStartPosition.js';
 import { isPositionNew } from './isPositionNew.js';
 import { checkMazeExit } from './checkMazeExit.js';
-import { MapTree } from './MapTree.js';
+import { MapTreeNode } from './MapTreeNode.js';
 
 const startPosition = findStartPosition(maze);
 
+const mapTreeNodeList = [];
 
-const mapTree = new MapTree();
+const mapTreeNode = new MapTreeNode({ header: true, position: startPosition });
+mapTreeNodeList.push(mapTreeNode);
 
 const checkedPositions = [];
 
 let moveCount = 0;
 
-const findWays = (startPosition, map) => {
+const findWays = (startPosition) => {
   const { x, y } = startPosition;
 
   moveCount++;
@@ -25,51 +27,97 @@ const findWays = (startPosition, map) => {
   // check upstair
   if (maze[y - 1] && maze[y - 1][x] === '+' && isPositionNew({ x, y: y - 1 }, checkedPositions)) {
     const newPosition = { x, y: y - 1 };
-    map.up = { move: 'up' };
-    checkMazeExit(newPosition, maze, map.up);
-    checkedPositions.push(newPosition);
-    findWays({ x, y: y - 1 }, map.up);
+    const newMapTreeNode = new MapTreeNode({ move: 'up', position: newPosition, parent: startPosition });
+    mapTreeNodeList.push(newMapTreeNode);
+
+    const isFoundExit = checkMazeExit(newPosition, maze, newMapTreeNode);
+    if (!isFoundExit) {
+      checkedPositions.push(newPosition);
+      findWays(newPosition);
+    }
   }
 
   // check downstair
   if (maze[y + 1] && maze[y + 1][x] === '+' && isPositionNew({ x, y: y + 1 }, checkedPositions)) {
     const newPosition = { x, y: y + 1 };
-    map.down = {  move: 'down' };
-    const isFoundExit = checkMazeExit(newPosition, maze, map.down);
-    if (isFoundExit) {
-      console.log('Exit if found!');
-    } else {
+    const newMapTreeNode = new MapTreeNode({ move: 'down', position: newPosition, parent: startPosition });
+    mapTreeNodeList.push(newMapTreeNode);
+
+    const isFoundExit = checkMazeExit(newPosition, maze, newMapTreeNode);
+    if (!isFoundExit) {
       checkedPositions.push(newPosition);
-      findWays({ x, y: y + 1 }, map.down);
+      findWays(newPosition);
+
     }
   }
 
   // check left
   if (maze[y][x - 1] === '+' && isPositionNew({ x: x - 1, y }, checkedPositions)) {
     const newPosition = { x: x - 1, y };
-    map.left = { move: 'left' };
-    checkMazeExit(newPosition, maze, map.left);
-    checkedPositions.push(newPosition);
-    findWays({ x: x - 1, y }, map.left);
+    const newMapTreeNode = new MapTreeNode({ move: 'left', position: newPosition, parent: startPosition });
+    mapTreeNodeList.push(newMapTreeNode);
+
+    const isFoundExit = checkMazeExit(newPosition, maze, newMapTreeNode);
+    if (!isFoundExit) {
+      checkedPositions.push(newPosition);
+      findWays(newPosition);
+    }
   }
 
   // check right
   if (maze[y][x + 1] === '+' && isPositionNew({ x: x + 1, y }, checkedPositions)) {
     const newPosition = { x: x + 1, y };
-    map.right = { move: 'right' };
-    checkMazeExit(newPosition, maze, map.right);
-    checkedPositions.push(newPosition);
-    findWays({ x: x + 1, y }, map.right);
+    const newMapTreeNode = new MapTreeNode({ move: 'right', position: newPosition, parent: startPosition });
+    mapTreeNodeList.push(newMapTreeNode);
+
+    const isFoundExit = checkMazeExit(newPosition, maze, newMapTreeNode);
+    if (!isFoundExit) {
+      checkedPositions.push(newPosition);
+      findWays(newPosition);
+    }
   }
 
 }
 
-findWays(startPosition, mapTree);
+findWays(startPosition);
 
-console.log('Map: ', JSON.stringify(movesMap));
-console.log('checkedPositions: ', checkedPositions);
-console.log('Movecounter: ', moveCount);
+let prevMoveFindCounter = 0;
 
-const readPaths = (movesMap, moves) => {
-  
-}
+const exitsArr = mapTreeNodeList.filter( node => {
+  prevMoveFindCounter++;
+  if (node.exit) {
+    return true;
+  }
+});
+
+const paths = exitsArr.map(exitNode => {
+  prevMoveFindCounter++;
+  let currNode = exitNode;
+  const path = [];
+
+  const prevMove = (node) => {
+    prevMoveFindCounter++;
+    if (node.header === false) {
+      path.unshift(node.move);
+      const parentNode = mapTreeNodeList.find( nodeItem => {
+        prevMoveFindCounter++;
+        if (nodeItem.position.x === node.parent.x && nodeItem.position.y === node.parent.y) {
+          return true;
+        }
+      })
+      if (parentNode) {
+        prevMove(parentNode);
+      }
+    }
+  }
+
+  prevMove(currNode);
+  return path;
+
+})
+
+console.log(paths);
+console.log(`All exits were found in ${moveCount} iterations`);
+console.log(`Exit paths were generated in ${prevMoveFindCounter} iterations`);
+
+
