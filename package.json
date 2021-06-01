@@ -1,0 +1,21 @@
+{
+  "name": "maze",
+  "version": "1.0.0",
+  "description": "test task",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Helias17/maze.git"
+  },
+  "author": "Ilya Komar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Helias17/maze/issues"
+  },
+  "homepage": "https://github.com/Helias17/maze#readme"
+}
